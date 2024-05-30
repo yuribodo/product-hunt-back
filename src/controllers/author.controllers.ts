@@ -33,28 +33,42 @@ export const getAuthorbyId = async (req: Request, res: Response) => {
 
 
 // createPost
-export const createAuthor = async (req: Request, res: Response) => { // Define types for req and res
+export const createAuthor = async (req: Request, res: Response) => {
     interface Post {
         id: string;
         title: string;
+        hashtag: string;
+        upvotes: number;
+        description?: string;
     }
-    try {
-        const { name, email, posts, } = req.body;
 
-        const postsConnectOrCreate = posts.map((posts: Post) => ({
-            where: { id: posts.id },
-            create: { title: posts.title }
-        }));
+    try {
+        const { name, email, posts } = req.body;
+
+        // Prepare connectOrCreate logic only if posts are provided
+        const postsConnectOrCreate = Array.isArray(posts) ? posts.map((post: Post) => ({
+            where: { id: post.id },
+            create: { 
+                title: post.title,
+                hashtag: post.hashtag,
+                upvotes: post.upvotes,
+                description: post.description // this is optional
+            }
+        })) : undefined;
+
+        const authorData: any = {
+            name,
+            email
+        };
+
+        if (postsConnectOrCreate) {
+            authorData.posts = {
+                connectOrCreate: postsConnectOrCreate
+            };
+        }
 
         const author = await authorClient.create({
-            data: {
-                name,
-                email,
-                posts: {
-                    connectOrCreate: postsConnectOrCreate
-                },
-                
-            },
+            data: authorData,
         });
 
         res.status(201).json({ data: author });

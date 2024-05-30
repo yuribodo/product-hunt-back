@@ -41,7 +41,7 @@ export const createPost = async (req: Request, res: Response) => { // Define typ
         name: string;
     }
     try {
-        const { title, description, author, authorId } = req.body;
+        const { title, description, hashtag, upvotes, author, authorId } = req.body;
 
         const authorConnectOrCreate = author.map((authors: Author) => ({
             where: { id: authors.id },
@@ -52,6 +52,8 @@ export const createPost = async (req: Request, res: Response) => { // Define typ
             data: {
                 title,
                 description,
+                hashtag,
+                upvotes,
                 author: {
                     connectOrCreate: authorConnectOrCreate
                 },
