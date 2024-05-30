@@ -58,7 +58,10 @@ export const createAuthor = async (req: Request, res: Response) => {
 
         const authorData: any = {
             name,
-            email
+            email,
+            posts: {
+                connectOrCreate: postsConnectOrCreate
+            }
         };
 
         if (postsConnectOrCreate) {

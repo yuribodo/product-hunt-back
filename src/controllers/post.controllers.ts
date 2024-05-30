@@ -35,18 +35,9 @@ export const getPostbyId = async (req: Request, res: Response) => {
 
 
 // createPost
-export const createPost = async (req: Request, res: Response) => { // Define types for req and res
-    interface Author {
-        id: string;
-        name: string;
-    }
+export const createPost = async (req: Request, res: Response) => {
     try {
-        const { title, description, hashtag, upvotes, author, authorId } = req.body;
-
-        const authorConnectOrCreate = author.map((authors: Author) => ({
-            where: { id: authors.id },
-            create: { name: authors.name }
-        }));
+        const { title, description, hashtag, upvotes, authorId } = req.body;
 
         const post = await postClient.create({
             data: {
@@ -54,10 +45,7 @@ export const createPost = async (req: Request, res: Response) => { // Define typ
                 description,
                 hashtag,
                 upvotes,
-                author: {
-                    connectOrCreate: authorConnectOrCreate
-                },
-                authorId
+                authorId // Aqui você só precisa passar o authorId, já que o autor já está criado
             },
         });
 
