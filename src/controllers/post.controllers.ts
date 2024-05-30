@@ -16,19 +16,23 @@ export const getAllPosts = async (req: Request, res: Response) => { // Define ty
     }
 };
 
-// getPostById
 export const getPostbyId = async (req: Request, res: Response) => {
     try {
-        const postId = req.params.id; // postId is already a string
+        const postId = req.params.id; // Captura o ID do post dos parâmetros da rota
         const post = await postClient.findUnique({
             where: {
                 id: postId,
             },
         });
 
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
         res.status(200).json({ data: post });
     } catch (e) {
-        console.log(e);
+        console.error(e);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
